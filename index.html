@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title> Cypher </title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <h1>Cypher This</h1>
+
+    <p>
+      Enter text to be encrypted and then choose a key word or name for your cypher. Then you can have someone decrypt the text using the key word that you used.
+    </p>
+
+    <div class="center">
+      <div class="center">
+        <p>Encrypt or Decrypt</p>
+        <div>
+          <input type="radio" id="encrypt" name="cryptType" value="encrypt"
+                 checked>
+          <label for="encrypt">Encrypt</label>
+        </div>
+
+        <div>
+          <input type="radio" id="decrypt" name="cryptType" value="decrypt">
+          <label for="decrypt">Decrypt</label>
+        </div>
+
+        <br>
+        <label for="sentence"> What would you like to Encrypt/Decrypt </label>
+        <input type="text" id="sentence" name="sentence" value="">
+        <br>
+        <label for="cypherKey"> Enter A Cypher Key </label>
+        <input type="text" id="cypherKey" name="cypherKey" value="">
+        <br>
+        <button id="submitButton"> Submit </button>
+      </div>
+
+      <p id="response"></p>
+    </div>
+
+
+
+
+    <script type="text/javascript" src="script.js"></script>
+  </body>
+</html>
