@@ -1,5 +1,5 @@
 # cypher-this
-[https://cypher-this.glitch.me/](cypher-this)
+[cypher-this](https://cypher-this.glitch.me/)
 
 click the link to test out the cypher for yourself.
 
