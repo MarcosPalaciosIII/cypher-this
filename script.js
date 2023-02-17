@@ -1,6 +1,3 @@
-
-// - function to create alphabet in array
-
 // " ".charCodeAt(0) // 32
 // "!".charCodeAt(0) // 33
 // '"'.charCodeAt(0) // 34
@@ -47,73 +44,75 @@
 // "|".charCodeAt(0) // 124
 // "}".charCodeAt(0) // 125
 
-var genCharArray = (charA, charZ) => {
+//function to generate a shuffled alphabet string used in the cypher algorithm.
+let genAlpha1 = (charA, charZ, key) => {
+  let alphabetArray = []; //alpha array
+  let from = charA.charCodeAt(0); //beginning character
+  let to = charZ.charCodeAt(0); //ending character
 
-    let alphabetArray = [], i = charA.charCodeAt(0), j = charZ.charCodeAt(0);
-    for (; i <= j; ++i) {
-        alphabetArray.push(String.fromCharCode(i));
-    }
-    return alphabetArray;
-};
-
-
-// - another way to set up a unique array along with a filter
-
-// var onlyUnique = (value, index, self) => {
-//     return self.indexOf(value) === index;
-// }
-
-// - the function for the cypher
-var cypher = (word, sentence, cryptType) => {
-
-  // creating alphabet to use in the cypher using the "genCharArray" function from above
-  let alphabet = genCharArray('!', '}');
-
-  // how much each letter will shift in the cypher
-  let shift = alphabet.indexOf(word[0]) + word.length;
-
-  // this is for a unique array
-  let theWord = [...new Set(word.split(''))];
-
-  // - another way to make a unique array using the "onlyUnique" function from above
-  // let theWord = word.split('').filter(onlyUnique)
-
-for(let i = theWord.length-1; i >= 0; i--) {
-    alphabet.splice(alphabet.indexOf(theWord[i]), 1);
-    alphabet.unshift(theWord[i]);
-
+  //add all the characters between to/from to the alpha array
+  for (let i = from; i <= to; i++) {
+    alphabetArray.push(String.fromCharCode(i));
   }
 
+  //create a unique array by splitting characters in the key and removing duplicates chars
+  let uniqueArr = [...new Set(key.split(''))];
+
+  //shuffling alphaArray by moving the uniqueArr chars.
+  for (let i = uniqueArr.length - 1; i >= 0; i--) {
+    alphabetArray.splice(alphabetArray.indexOf(uniqueArr[i]), 1);
+    alphabetArray.unshift(uniqueArr[i]);
+  }
+
+  //return alphaArray as a string
+  return alphabetArray.join('');
+};
+
+//function to generate a shifted alpha string based on alpha1
+let genAlpha2 = (alpha, shift) => {
+  let tempArr = [];
+
+  //Determine the new character base on the amount shifted
+  for (char of alpha) {
+    let index = (alpha.indexOf(char) + shift) % alpha.length;
+    tempArr.push(alpha[index]);
+  }
+
+  //return shifted alpha as a string
+  return tempArr.join('');
+};
+
+// - the function for the cypher
+let cypher = (sentence, method, key) => {
   // this will hold the new sentence that is created from the cypher to then have it returned
   let newSentence = [];
 
-  // - another way to iterate over an array (similar to normal for loop)
+  // generate first alpha string of characters
+  let alpha1 = genAlpha1(' ', '}', key);
 
-  // for(i in sentence) {
-  //   console.log(sentence[i])
-  // }
+  // determines the amount each char will shift for the second alpha string.
+  let shift = key.charCodeAt(0) + key.length;
 
-  // iterate through the sentence given and make the changes needed in order to encrypt or decrypt it
-for(let i of sentence) {
-    let tempIndex = alphabet.indexOf(i) + shift;
-    if(cryptType === 'decrypt') {
-      tempIndex = alphabet.indexOf(i) - shift;
-    }
+  // generate second alpha string with the shifted characters
+  let alpha2 = genAlpha2(alpha1, shift);
 
-    if(alphabet.indexOf(i) < 0) {
-      newSentence.push(' ');
-    } else if(tempIndex > alphabet.length-1) {
-      newSentence.push(alphabet[tempIndex - alphabet.length]);
-    } else if(tempIndex < 0 && cryptType === 'decrypt') {
-      newSentence.push(alphabet[tempIndex + alphabet.length]);
+  //iterate through the sentence given and make the changes needed in order to encrypt or decrypt it
+  for (let char of sentence) {
+    if (method === 'encrypt') {
+      //push to newSentence Array the shifted character
+      let index = alpha1.indexOf(char);
+      newSentence.push(alpha2[index]);
     } else {
-      newSentence.push(alphabet[tempIndex]);
-    }
+      // we are decryping
 
+      let index = alpha2.indexOf(char);
+      newSentence.push(alpha1[index]);
+    }
   }
+
+  //return
   return newSentence.join('');
 };
-
 
 window.addEventListener('DOMContentLoaded', () => {
   var theCryptType;
@@ -121,13 +120,16 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('submitButton').onclick = () => {
     var theSentence = document.getElementById('sentence').value;
     var cypherKey = document.getElementById('cypherKey').value;
-     if(document.getElementById('encrypt').checked) {
-       theCryptType = 'encrypt';
-     } else {
-       theCryptType = 'decrypt';
-     }
+    if (document.getElementById('encrypt').checked) {
+      theCryptType = 'encrypt';
+    } else {
+      theCryptType = 'decrypt';
+    }
 
-    document.getElementById('response').innerText = cypher(cypherKey, theSentence, theCryptType);
-
+    document.getElementById('response').innerText = cypher(
+      theSentence,
+      theCryptType,
+      cypherKey
+    );
   };
 });
